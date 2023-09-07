@@ -2,14 +2,19 @@ import "./App.css";
 import React, { useCallback, useEffect, useState } from "react";
 
 function App() {
-  let today = new Date();
-  let year = today.getFullYear(); // 년도
-  let month = today.getMonth() + 1; // 월
-  let date = today.getDate(); // 날짜
-  let day = today.getDay(); // 요일
+  fetch("https://jsonplaceholder.typicode.com/posts")
+    .then((response) => response.json())
+    .then((json) => console.log(json));
 
-  let todayDate = year + "-" + month + "-" + date;
-  let yesterDayDate = year + "-" + month + "-" + (date - 1);
+  let today = new Date();
+  let todayDate =
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
+  let yesterDayDate =
+    today.getFullYear() +
+    "-" +
+    (today.getMonth() + 1) +
+    "-" +
+    (today.getDate() - 1);
 
   let [articleTitle, setArticleTitle] = useState([
     "React blog 예시 타이틀 4",
@@ -22,13 +27,11 @@ function App() {
       return yesterDayDate;
     })
   );
-  let [title, setTitltle] = useState(0);
-  let [like, setLike] = useState(
+  let [articleLike, setArticleLike] = useState(
     articleTitle.map(() => {
       return 0;
     })
   );
-  let [modal, setModal] = useState(false);
   let [inputData, setInputData] = useState("");
 
   return (
@@ -41,27 +44,22 @@ function App() {
         {articleTitle.map((it, index) => {
           return (
             <div className="list" key={index}>
-              <h4
-                onClick={() => {
-                  setModal(!modal);
-                  setTitltle(index);
-                }}
-              >
+              <h4 onClick={() => {}}>
                 {it}
                 <span
                   className="btn-like"
                   onClick={(e) => {
                     e.stopPropagation();
-                    let copy = [...like];
+                    let copy = [...articleLike];
                     copy[index] = parseInt(copy[index]) + 1;
-                    setLike(copy);
+                    setArticleLike(copy);
                   }}
                 >
                   👍 좋아요
                 </span>
-                <span className="like-count">{like[index]}</span>
+                <span className="like-count">{articleLike[index]}</span>
               </h4>
-              <p>{articleDate[index]} 발행</p>
+              <p>Published {articleDate[index]}</p>
               <button
                 onClick={() => {
                   let copy = [...articleTitle];
@@ -92,8 +90,8 @@ function App() {
             let dateCopy = [todayDate, ...articleDate];
             setArticleDate(dateCopy);
 
-            let likeCopy = [0, ...like];
-            setLike(likeCopy);
+            let likeCopy = [0, ...articleLike];
+            setArticleLike(likeCopy);
           }}
         >
           글 발행
