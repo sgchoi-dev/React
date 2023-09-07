@@ -48,11 +48,51 @@ div {
   color: white;
   padding-left: 20px;
 }
-.list {
-  padding-left: 20px;
+
+.list-wrap {
+}
+.list-wrap .list {
+  padding: 20px;
   text-align: left;
   border-bottom: 1px solid gray;
 }
+.list-wrap .list h4 {
+  margin: 0;
+}
+
+.list-wrap .list h4 .like-count {
+  margin-left: 10px;
+}
+.list-wrap .list h4 .btn-like {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #eee;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.enroll-article-area {
+  display: flex;
+  margin-top: 50px;
+  padding: 0 20px;
+  height: 100px;
+}
+
+.enroll-article-area textarea {
+  width: 100%;
+  padding: 10px;
+  resize: none;
+}
+
+.enroll-article-area button {
+  margin-left: 10px;
+  width: 100px;
+  color: #fff;
+  background-color: #444;
+  cursor: pointer;
+}
+
 .modal {
   margin-top: 20px;
   padding: 20px;

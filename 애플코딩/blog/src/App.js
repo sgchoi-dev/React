@@ -1,151 +1,120 @@
-import { render } from "@testing-library/react";
 import "./App.css";
 import React, { useCallback, useEffect, useState } from "react";
 
 function App() {
-  let post = "강남 우동 맛집";
-  let [글제목, 글제목바꾸기] = useState([
-    "남자 코트 추천",
-    "강남 우동맛집",
-    "파이썬독학",
+  let today = new Date();
+  let year = today.getFullYear(); // 년도
+  let month = today.getMonth() + 1; // 월
+  let date = today.getDate(); // 날짜
+  let day = today.getDay(); // 요일
+
+  let todayDate = year + "-" + month + "-" + date;
+  let yesterDayDate = year + "-" + month + "-" + (date - 1);
+
+  let [articleTitle, setArticleTitle] = useState([
+    "React blog 예시 타이틀 4",
+    "React blog 예시 타이틀 3",
+    "React blog 예시 타이틀 2",
+    "React blog 예시 타이틀 1",
   ]);
+  let [articleDate, setArticleDate] = useState(
+    articleTitle.map(() => {
+      return yesterDayDate;
+    })
+  );
   let [title, setTitltle] = useState(0);
-  let [따봉, 따봉변경] = useState([0, 0, 0]);
+  let [like, setLike] = useState(
+    articleTitle.map(() => {
+      return 0;
+    })
+  );
   let [modal, setModal] = useState(false);
-  let [입력값, 입력값변경] = useState("");
-
-  /* const 함수 = (index) => {
-    let 새로운따봉배열 = [...따봉];
-    새로운따봉배열[index] = parseInt(새로운따봉배열[index]) + 1;
-    따봉변경(새로운따봉배열);
-  }; */
-
-  /*function 함수(index) {
-    let 새로운따봉배열 = [...따봉];
-    새로운따봉배열[index] = parseInt(새로운따봉배열[index]) + 1;
-    따봉변경(새로운따봉배열);
-  }*/
-
-  function 첫글제목바꾸기() {
-    let 새로운글제목배열 = [...글제목];
-    새로운글제목배열[0] = "여자코트 추천";
-    글제목바꾸기(새로운글제목배열);
-  }
+  let [inputData, setInputData] = useState("");
 
   return (
     <div className="App">
       <div className="black-nav">
-        <h4 style={{ color: "red", fontSize: "16px" }}>ReactBlog</h4>
+        <h4>ReactBlog</h4>
       </div>
 
-      <button
-        onClick={() => {
-          let sortedArr = [...글제목];
-          글제목바꾸기(sortedArr.sort());
-        }}
-      >
-        가나다순정렬 버튼
-      </button>
-
-      {글제목.map((it, index) => {
-        return (
-          <div className="list" key={index}>
-            <h4
-              onClick={() => {
-                setModal(!modal);
-                setTitltle(index);
-              }}
-            >
-              {it}
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  let 새로운따봉배열 = [...따봉];
-                  새로운따봉배열[index] = parseInt(새로운따봉배열[index]) + 1;
-                  따봉변경(새로운따봉배열);
+      <div className="list-wrap">
+        {articleTitle.map((it, index) => {
+          return (
+            <div className="list" key={index}>
+              <h4
+                onClick={() => {
+                  setModal(!modal);
+                  setTitltle(index);
                 }}
               >
-                👍
-              </span>
-              {따봉[index]}
-            </h4>
-            <p>2월 17일 발행</p>
-            <button
-              onClick={() => {
-                let 새로운글배열 = [...글제목];
-                새로운글배열.splice(index, 1);
-                글제목바꾸기(새로운글배열);
-              }}
-            >
-              삭제하기
-            </button>
-          </div>
-        );
-      })}
+                {it}
+                <span
+                  className="btn-like"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    let copy = [...like];
+                    copy[index] = parseInt(copy[index]) + 1;
+                    setLike(copy);
+                  }}
+                >
+                  👍 좋아요
+                </span>
+                <span className="like-count">{like[index]}</span>
+              </h4>
+              <p>{articleDate[index]} 발행</p>
+              <button
+                onClick={() => {
+                  let copy = [...articleTitle];
+                  copy.splice(index, 1);
+                  setArticleTitle(copy);
+                }}
+              >
+                🗑️ 삭제하기
+              </button>
+            </div>
+          );
+        })}
+      </div>
 
-      <input
-        type="text"
-        onChange={(e) => {
-          입력값변경(e.target.value);
-        }}
-      />
-      <button
-        onClick={() => {
-          let 새로운글배열 = [입력값, ...글제목];
-          글제목바꾸기(새로운글배열);
-        }}
-      >
-        글 발행
-      </button>
-
-      {modal ? (
-        <Modal
-          color={"skyblue"}
-          글제목={글제목}
-          첫글제목바꾸기={첫글제목바꾸기}
-          title={title}
-        />
-      ) : null}
-
-      <Modal2 />
-    </div>
-  );
-}
-
-function Modal({ 글제목, color, 첫글제목바꾸기, title }) {
-  return (
-    <div className="modal" style={{ background: color }}>
-      <h4>{글제목[title]}</h4>
-      <p>날짜</p>
-      <p>상세내용</p>
-      <button onClick={첫글제목바꾸기}>글수정</button>
-    </div>
-  );
-}
-
-class Modal2 extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      name: "kim",
-      age: 20,
-    };
-  }
-  render() {
-    return (
-      <div>
-        안녕{this.state.age}
+      <div className="enroll-article-area">
+        <textarea
+          placeholder="발행할 글을 적어주세요"
+          onChange={(e) => {
+            setInputData(e.target.value);
+          }}
+        ></textarea>
         <button
+          type="button"
           onClick={() => {
-            this.setState({ age: 21 });
+            let copy = [inputData, ...articleTitle];
+            setArticleTitle(copy);
+
+            let dateCopy = [todayDate, ...articleDate];
+            setArticleDate(dateCopy);
+
+            let likeCopy = [0, ...like];
+            setLike(likeCopy);
           }}
         >
-          버튼
+          글 발행
         </button>
       </div>
-    );
-  }
+
+      {/* {modal ? (
+        <Modal color={"skyblue"} articleTitle={articleTitle} title={title} />
+      ) : null} */}
+    </div>
+  );
+}
+
+function Modal({ articleTitle, color, title }) {
+  return (
+    <div className="modal" style={{ background: color }}>
+      <h4>{articleTitle[title]}</h4>
+      <p>2023-09-07</p>
+      <p>상세내용영역</p>
+    </div>
+  );
 }
 
 export default App;
