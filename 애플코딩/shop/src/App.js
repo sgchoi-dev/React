@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import data from "./data";
-import "./App.css";
+import "./App.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import bg from "./img/bg.png";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
@@ -69,7 +69,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<MainContents shoes={shoes} />} />
-        <Route path="/detail" element={<Detail />} />
+        <Route path="/detail/:id" element={<Detail shoes={shoes} />} />
         <Route path="/about" element={<About />}>
           <Route path="member" element={<div>member에요</div>} />
         </Route>
