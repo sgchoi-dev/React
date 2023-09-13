@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { createContext, useState } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import data from "./data";
-import "./App.module.css";
+import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import bg from "./img/bg.png";
 import { Routes, Route, Link, useNavigate, Outlet } from "react-router-dom";
 import Detail from "./pages/Detail";
+import Cart from "./pages/Cart";
+import axios from "axios";
+
+export let Context1 = createContext();
 
 const ItemList = ({ index, shoes }) => {
   return (
@@ -21,7 +25,9 @@ const ItemList = ({ index, shoes }) => {
   );
 };
 
-const MainContents = ({ shoes }) => {
+const MainContents = ({ shoes, setShoes }) => {
+  let [btnClickCnt, setBtnClickCnt] = useState(0);
+
   return (
     <>
       <div
@@ -35,12 +41,37 @@ const MainContents = ({ shoes }) => {
           })}
         </div>
       </div>
+      {btnClickCnt < 2 ? (
+        <button
+          onClick={() => {
+            if (btnClickCnt < 2) {
+              axios
+                .get(
+                  `https://codingapple1.github.io/shop/data${
+                    btnClickCnt + 2
+                  }.json`
+                )
+                .then((response) => {
+                  let copy = [...shoes, ...response.data];
+                  setShoes(copy);
+                })
+                .catch(() => {
+                  console.log("실패");
+                });
+            }
+            setBtnClickCnt(btnClickCnt + 1);
+          }}
+        >
+          더보기
+        </button>
+      ) : null}
     </>
   );
 };
 
 function App() {
-  let [shoes] = useState(data);
+  let [재고] = useState([10, 11, 12]);
+  let [shoes, setShoes] = useState(data);
   let navigate = useNavigate();
 
   return (
@@ -68,8 +99,20 @@ function App() {
       </Navbar>
 
       <Routes>
-        <Route path="/" element={<MainContents shoes={shoes} />} />
-        <Route path="/detail/:id" element={<Detail shoes={shoes} />} />
+        <Route
+          path="/"
+          element={<MainContents shoes={shoes} setShoes={setShoes} />}
+        />
+        <Route
+          path="/detail/:id"
+          element={
+            <Context1.Provider value={{ 재고, shoes }}>
+              <Detail shoes={shoes} />
+            </Context1.Provider>
+          }
+        />
+        <Route path="/cart" element={<Cart />}></Route>
+
         <Route path="/about" element={<About />}>
           <Route path="member" element={<div>member에요</div>} />
         </Route>

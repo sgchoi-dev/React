@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Nav } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+
+import { Context1 } from "./../App";
 
 let YellowBtn = styled.button`
   background: ${(props) => (props.bg ? props.bg : "yellow")};
@@ -15,7 +18,9 @@ let Box = styled.div`
 
 let NewBtn = styled.button(YellowBtn);
 
-const Detail = ({ shoes }) => {
+const Detail = () => {
+  let { 재고, shoes } = useContext(Context1);
+
   let { id } = useParams();
   let matchedItem = shoes.find((x) => {
     return x.id.toString() === id;
@@ -24,8 +29,12 @@ const Detail = ({ shoes }) => {
   let [inputAlertVisible, setInputAlertVisible] = useState(false);
   let [num, setNum] = useState("");
   let [count, setCount] = useState(0);
+  let [tab, setTab] = useState(0);
+  let [variable, setVariable] = useState("");
 
   useEffect(() => {
+    setVariable("loaded");
+
     setTimeout(() => {
       setAlertVisible(false);
     }, 2000);
@@ -45,7 +54,8 @@ const Detail = ({ shoes }) => {
   }, [num]);
 
   return (
-    <div className="container">
+    <div className={"container " + variable}>
+      {재고}
       <Box>
         <YellowBtn>버튼</YellowBtn>
         <YellowBtn bg="blue">버튼</YellowBtn>
@@ -97,8 +107,49 @@ const Detail = ({ shoes }) => {
           <button className="btn btn-danger">주문하기</button>
         </div>
       </div>
+
+      <Nav variant="tabs" defaultActiveKey="link0">
+        <Nav.Item>
+          <Nav.Link onClick={() => setTab(0)} eventKey="link0">
+            버튼0
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link onClick={() => setTab(1)} eventKey="link1">
+            버튼1
+          </Nav.Link>
+        </Nav.Item>
+        <Nav.Item>
+          <Nav.Link onClick={() => setTab(2)} eventKey="link2">
+            버튼2
+          </Nav.Link>
+        </Nav.Item>
+      </Nav>
+
+      <TabContent tab={tab} />
     </div>
   );
 };
+
+function TabContent({ tab }) {
+  let { 재고 } = useContext(Context1);
+  let [fade, setFade] = useState("");
+  useEffect(() => {
+    let timer = setTimeout(() => {
+      setFade("end");
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      setFade("");
+    };
+  }, [tab]);
+
+  return (
+    <div className={"start " + fade}>
+      {[<div>내용0</div>, <div>내용1</div>, <div>내용2</div>][tab]}
+    </div>
+  );
+}
 
 export default Detail;
