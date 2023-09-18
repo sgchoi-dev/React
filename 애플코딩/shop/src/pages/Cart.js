@@ -1,6 +1,13 @@
 import Table from "react-bootstrap/Table";
 import { useDispatch, useSelector } from "react-redux";
-import { changeName } from "../store";
+import { changeName, increase } from "../store/useSlice";
+import { changeCount, deleteItem } from "../store";
+import { memo, useState } from "react";
+
+let Child = memo(function () {
+  console.log("재렌더링됨");
+  return <div>자식임</div>;
+});
 
 function Cart() {
   let state = useSelector((state) => {
@@ -8,17 +15,34 @@ function Cart() {
   });
 
   let dispatch = useDispatch();
+  let [count, setCount] = useState(0);
 
   return (
     <div>
-      {state.user} 의 장바구니
+      <Child></Child>
+      <button
+        onClick={() => {
+          setCount(count + 1);
+        }}
+      >
+        렌더링테스트
+      </button>
+      {state.user.name} {state.user.age} 의 장바구니
+      <button
+        onClick={() => {
+          dispatch(increase(100));
+        }}
+      >
+        버튼
+      </button>
       <Table>
         <thead>
           <tr>
             <th>#</th>
             <th>상품명</th>
             <th>수량</th>
-            <th>변경하기</th>
+            <th>수량변경</th>
+            <th>삭제</th>
           </tr>
         </thead>
         <tbody>
@@ -31,10 +55,19 @@ function Cart() {
                 <td>
                   <button
                     onClick={() => {
-                      dispatch(changeName());
+                      dispatch(changeCount(item.id));
                     }}
                   >
                     +
+                  </button>
+                </td>
+                <td>
+                  <button
+                    onClick={() => {
+                      dispatch(deleteItem(item.id));
+                    }}
+                  >
+                    -
                   </button>
                 </td>
               </tr>

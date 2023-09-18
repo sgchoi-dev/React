@@ -2,8 +2,9 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Nav } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-
 import { Context1 } from "./../App";
+import { addItem } from "../store";
+import { useDispatch } from "react-redux";
 
 let YellowBtn = styled.button`
   background: ${(props) => (props.bg ? props.bg : "yellow")};
@@ -19,6 +20,8 @@ let Box = styled.div`
 let NewBtn = styled.button(YellowBtn);
 
 const Detail = () => {
+  let dispatch = useDispatch();
+
   let { 재고, shoes } = useContext(Context1);
 
   let { id } = useParams();
@@ -34,6 +37,11 @@ const Detail = () => {
 
   useEffect(() => {
     setVariable("loaded");
+
+    let watchedArr = JSON.parse(localStorage.getItem("watched"));
+    watchedArr.push(matchedItem.id);
+    watchedArr = [...new Set(watchedArr)];
+    localStorage.setItem("watched", JSON.stringify(watchedArr));
 
     setTimeout(() => {
       setAlertVisible(false);
@@ -104,7 +112,14 @@ const Detail = () => {
           <h4 className="pt-5">{matchedItem.title}</h4>
           <p>{matchedItem.content}</p>
           <p>{matchedItem.price}원</p>
-          <button className="btn btn-danger">주문하기</button>
+          <button
+            className="btn btn-danger"
+            onClick={() => {
+              dispatch(addItem(matchedItem));
+            }}
+          >
+            주문하기
+          </button>
         </div>
       </div>
 
